@@ -1,5 +1,4 @@
 import { Buffer } from "node:buffer";
-import type { Kernel } from "@raptor/kernel";
 
 export type V1Event = {
   path: string;
@@ -23,6 +22,18 @@ export type V2Event = {
 };
 
 export type LambdaEvent = V1Event | V2Event;
+
+/**
+ * A minimal interface for integrating with Kernel.
+ */
+interface Kernel {
+  /**
+   * Response with a valid HTTP response.
+   *
+   * @param request The request instnace.
+   */
+  respond(request: Request): Promise<Response>;
+}
 
 /**
  * The Lambda adapter for HTTP events.
