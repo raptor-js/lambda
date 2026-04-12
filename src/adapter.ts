@@ -26,7 +26,7 @@ export type LambdaEvent = V1Event | V2Event;
 /**
  * A minimal interface for integrating with Kernel.
  */
-interface Kernel {
+export interface Kernel {
   /**
    * Response with a valid HTTP response.
    *

@@ -1,6 +1,4 @@
-import type { Kernel } from "@raptor/kernel";
-
-import { LambdaAdapter, type LambdaEvent } from "./adapter.ts";
+import { type Kernel, LambdaAdapter, type LambdaEvent } from "./adapter.ts";
 
 /**
  * Process a Lambda event (either V1 or V2).
