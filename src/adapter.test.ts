@@ -11,6 +11,7 @@ import lambda from "./helper.ts";
 type LambdaResponse = {
   statusCode: number;
   headers: Record<string, string>;
+  cookies: string[];
   body: string;
   isBase64Encoded: boolean;
 };
@@ -548,6 +549,30 @@ Deno.test("test adapter response includes headers from kernel response", async (
   }) as LambdaResponse;
 
   assertEquals(result.headers["x-request-id"], "abc-123");
+});
+
+Deno.test("test adapter response preserves multiple set-cookie headers as cookies array", async () => {
+  const app = new Kernel();
+
+  app.add(() => {
+    const headers = new Headers();
+    headers.append("set-cookie", "access-token=abc; HttpOnly; Path=/");
+    headers.append("set-cookie", "refresh-token=xyz; HttpOnly; Path=/");
+
+    return new Response("OK", { headers });
+  });
+
+  const adapter = new LambdaAdapter(app);
+
+  const result = await adapter.handle({
+    path: "/",
+    httpMethod: "GET",
+  }) as LambdaResponse;
+
+  assertEquals(result.cookies.length, 2);
+  assertEquals(result.cookies[0].startsWith("access-token="), true);
+  assertEquals(result.cookies[1].startsWith("refresh-token="), true);
+  assertEquals("set-cookie" in result.headers, false);
 });
 
 Deno.test("test adapter response body is plain text for text content type", async () => {

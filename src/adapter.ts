@@ -150,7 +150,15 @@ export class LambdaAdapter {
   private async buildResponse(response: Response) {
     const headers: Record<string, string> = {};
 
+    const cookies: string[] = [];
+
     response.headers.forEach((value, key) => {
+      if (key.toLowerCase() === "set-cookie") {
+        cookies.push(value);
+
+        return;
+      }
+
       headers[key] = value;
     });
 
@@ -164,6 +172,7 @@ export class LambdaAdapter {
     return {
       statusCode: response.status,
       headers,
+      cookies,
       body: isBinary
         ? btoa(String.fromCharCode(...new Uint8Array(buffer)))
         : new TextDecoder().decode(buffer),
