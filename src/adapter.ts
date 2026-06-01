@@ -174,7 +174,7 @@ export class LambdaAdapter {
       headers,
       cookies,
       body: isBinary
-        ? btoa(String.fromCharCode(...new Uint8Array(buffer)))
+        ? Buffer.from(buffer).toString("base64")
         : new TextDecoder().decode(buffer),
       isBase64Encoded: isBinary,
     };
